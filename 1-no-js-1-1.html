@@ -108,16 +108,6 @@
       border-color: transparent var(--_bg) transparent transparent;
     }
 
-    /* 透明な要素を背面に敷くことでツールチップにマウスをのせやすくする */
-    .Tooltip::after {
-      position: absolute;
-      content: "";
-      display: block;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-
     /* ツールチップが上に表示される場合 */
     .Tooltip.-top::after {
       top: 100%;
@@ -174,9 +164,16 @@
       display: grid;
       place-items: center;
     }
+    .Container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
   </style>
 </head>
 <body>
+
+  <div class="Container">
 
     <a class="TooltipContainer" href="#">
       リンク（ツールチップ上）
@@ -186,6 +183,35 @@
         </span>
       </span>
     </a>
+
+    <a class="TooltipContainer" href="#">
+      リンク（ツールチップ右）
+      <span class="Tooltip -right" role="tooltip">
+        <span class="Tooltip_Body">
+          テキストが入ります。テキストが入ります。
+        </span>
+      </span>
+    </a>
+
+    <a class="TooltipContainer" href="#">
+      リンク（ツールチップ下）
+      <span class="Tooltip -bottom" role="tooltip">
+        <span class="Tooltip_Body">
+          テキストが入ります。テキストが入ります。
+        </span>
+      </span>
+    </a>
+
+    <a class="TooltipContainer" href="#">
+      リンク（ツールチップ左）
+      <span class="Tooltip -left" role="tooltip">
+        <span class="Tooltip_Body">
+          テキストが入ります。テキストが入ります。
+        </span>
+      </span>
+    </a>
+
+  </div>
 
 </body>
 </html>

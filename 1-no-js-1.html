@@ -219,9 +219,16 @@
       display: grid;
       place-items: center;
     }
+    .Container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
   </style>
 </head>
 <body>
+
+  <div class="Container">
 
     <a class="TooltipContainer" href="#">
       リンク（ツールチップ上）
@@ -231,6 +238,35 @@
         </span>
       </span>
     </a>
+
+    <a class="TooltipContainer" href="#">
+      リンク（ツールチップ右）
+      <span class="Tooltip -right" role="tooltip">
+        <span class="Tooltip_Body">
+          テキストが入ります。テキストが入ります。
+        </span>
+      </span>
+    </a>
+
+    <a class="TooltipContainer" href="#">
+      リンク（ツールチップ下）
+      <span class="Tooltip -bottom" role="tooltip">
+        <span class="Tooltip_Body">
+          テキストが入ります。テキストが入ります。
+        </span>
+      </span>
+    </a>
+
+    <a class="TooltipContainer" href="#">
+      リンク（ツールチップ左）
+      <span class="Tooltip -left" role="tooltip">
+        <span class="Tooltip_Body">
+          テキストが入ります。テキストが入ります。
+        </span>
+      </span>
+    </a>
+
+  </div>
 
 </body>
 </html>
