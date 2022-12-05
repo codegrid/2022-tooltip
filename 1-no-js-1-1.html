@@ -146,22 +146,8 @@
       width: calc(var(--_triangle-size) + var(--_gap));
     }
 
-    /*
-      ツールチップがあることを、支援技術に伝えるための非表示テキスト
-    */
     .Tooltip_Body {
       display: block;
-    }
-    .Tooltip_Body::before {
-      content: "。ツールチップあり：";
-      position: absolute;
-      clip: rect(1px, 1px, 1px, 1px);
-      clip-path: inset(50%);
-      height: 1px;
-      width: 1px;
-      margin: -1px;
-      overflow: hidden;
-      padding: 0;
     }
 
     /*
@@ -179,37 +165,6 @@
     .TooltipContainer:is(:hover, :focus-visible, :focus-within, :active) > .Tooltip {
       visibility: visible;
       opacity: 1;
-    }
-
-    /*
-      no-preferenceはprefers-reduced-motionの設定を行なっていない場合
-      アニメーションさせる
-    */
-    @media (prefers-reduced-motion: no-preference) {
-      /* フェードアウト用の指定 */
-      .Tooltip {
-        transition: visibility 0s linear 0.1s, opacity 0.1s, translate 0.1s;
-      }
-      /* フェードイン用の指定 */
-      .TooltipContainer:is(:hover, :focus-visible, :focus-within, :active) > .Tooltip {
-        transition: visibility 0s linear 0s, opacity 0.3s, translate 0.3s;
-      }
-      /*
-        ホバー・フォーカス・アクティブ時にツールチップをCSS Transitionさせるため
-        ホバー・フォーカス・アクティブ時でないときに、初期位置を指定する
-      */
-      .TooltipContainer:not(:is(:hover, :focus-visible, :focus-within, :active)) > .Tooltip.-top {
-        --_y: var(--_gap);
-      }
-      .TooltipContainer:not(:is(:hover, :focus-visible, :focus-within, :active)) > .Tooltip.-bottom   {
-        --_y: calc( var(--_gap) * -1);
-      }
-      .TooltipContainer:not(:is(:hover, :focus-visible, :focus-within, :active)) > .Tooltip.-left {
-        --_x: var(--_gap);
-      }
-      .TooltipContainer:not(:is(:hover, :focus-visible, :focus-within, :active)) > .Tooltip.-right {
-        --_x: calc(var(--_gap) * -1);
-      }  
     }
     html {
       height: 100%;
