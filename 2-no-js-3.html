@@ -188,11 +188,11 @@
     @media (prefers-reduced-motion: no-preference) {
       /* フェードアウト用の指定 */
       .Tooltip {
-        transition: visibility 0s linear 0.1s, opacity 0.1s, translate 0.1s;
+        transition: visibility 0s 0.1s, opacity 0.1s, translate 0.1s;
       }
       /* フェードイン用の指定 */
       .TooltipContainer:is(:hover, :focus-visible, :focus-within, :active) > .Tooltip {
-        transition: visibility 0s linear 0s, opacity 0.3s, translate 0.3s;
+        transition: visibility 0s 0s, opacity 0.3s, translate 0.3s;
       }
       /*
         ホバー・フォーカス・アクティブ時にツールチップをCSS Transitionさせるため
