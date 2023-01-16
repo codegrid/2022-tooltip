@@ -300,36 +300,24 @@
       $tooltip.classList.remove("-show");
     };
 
-    const handleTooltipOpening = ({ $tooltipContainer, $tooltip, $focusableElement }) => {
+    const handleTooltipOpening = ({ $tooltipContainer, $tooltip }) => {
       $tooltipContainer.addEventListener("mouseenter", () => {
         openTooltip($tooltip);
       });
 
-      $tooltipContainer.addEventListener("focus", () => {
+      $tooltipContainer.addEventListener("focusin", () => {
         openTooltip($tooltip);
       });
-
-      if ($focusableElement) {
-        $focusableElement.addEventListener("focus", () => {
-          openTooltip($tooltip);
-        });
-      }
     };
 
-    const handleTooltipClosing = ({ $tooltipContainer, $tooltip, $focusableElement }) => {
+    const handleTooltipClosing = ({ $tooltipContainer, $tooltip }) => {
       $tooltipContainer.addEventListener("mouseleave", () => {
         closeTooltip($tooltip);
       });
       
-      $tooltipContainer.addEventListener("blur", () => {
+      $tooltipContainer.addEventListener("focusout", () => {
         closeTooltip($tooltip);
       });
-      
-      if ($focusableElement) {
-        $focusableElement.addEventListener("blur", () => {
-          closeTooltip($tooltip);
-        });
-      }
       
       document.addEventListener('keydown', (e) => {
         if (e.key === "Escape" || e.key === "Esc") {
@@ -343,9 +331,8 @@
       
       $tooltipContainers.forEach(($tooltipContainer) => {
         const $tooltip = $tooltipContainer.querySelector(".Tooltip");
-        const $focusableElement = $tooltipContainer.querySelector("a, input, select, textarea");
-        handleTooltipOpening({ $tooltipContainer, $tooltip, $focusableElement });
-        handleTooltipClosing({ $tooltipContainer, $tooltip, $focusableElement });
+        handleTooltipOpening({ $tooltipContainer, $tooltip });
+        handleTooltipClosing({ $tooltipContainer, $tooltip });
       })
     };
 
