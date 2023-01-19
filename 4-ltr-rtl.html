@@ -40,7 +40,12 @@
       padding: 0;
     }
 
+    [dir="rtl"] .Tooltip,
     .Tooltip[dir="rtl"] {
+      --isRTL: 1;
+    }
+
+    .Tooltip:dir(rtl) {
       --isRTL: 1;
     }
 
@@ -87,9 +92,8 @@
 
     /* ツールチップが上に表示される場合の△ */
     .Tooltip.-block-start::before {
-      bottom: calc(var(--_triangle-size) * -1);
-      right: 0;
-      left: 0;
+      inset-block-end: calc(var(--_triangle-size) * -1);
+      inset-inline: 0;
       border-block-width: var(--_triangle-size) 0;
       border-inline-width: var(--_triangle-size);
       border-block-color: var(--_bg) transparent;
@@ -223,16 +227,16 @@
         ホバー・フォーカス・アクティブ時にツールチップをCSS Transitionさせるため
         ホバー・フォーカス・アクティブ時でないときに、初期位置を指定する
       */
-      .Tooltip:not(.-show).-top {
+      .Tooltip:not(.-show).-block-start {
         --_y: var(--_gap);
       }
-      .Tooltip:not(.-show).-bottom   {
+      .Tooltip:not(.-show).-block-end {
         --_y: calc( var(--_gap) * -1);
       }
-      .Tooltip:not(.-show).-left {
+      .Tooltip:not(.-show).-inline-start {
         --_x: var(--_gap);
       }
-      .Tooltip:not(.-show).-right {
+      .Tooltip:not(.-show).-inline-end {
         --_x: calc(var(--_gap) * -1);
       }  
     }
@@ -276,22 +280,26 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 30px;
       writing-mode: horizontal-tb;
+      max-width: 80%;
+      margin-inline: auto;
     }
+    .Container p,
     .Container h2 {
       grid-column: 1 / -1;
       width: 100%;
+      margin: 0;
     }
   </style>
 </head>
 <body>
   <div class="Container">
 
-    <h2>LTR</h2>
+    <h2>dir="ltr"を指定</h2>
 
     <div>
-      <a class="TooltipContainer" href="#">
+      <a class="TooltipContainer" href="#" dir="ltr">
         リンク（ツールチップ上）
-        <span class="Tooltip -block-start" role="tooltip" dir="ltr">
+        <span class="Tooltip -block-start" role="tooltip">
           <span class="Tooltip_Body">
             テキストが入ります。テキストが入ります。
           </span>
@@ -300,9 +308,9 @@
     </div>
 
     <div>
-      <a class="TooltipContainer" href="#">
-        リンク（ツールチップ右）
-        <span class="Tooltip -inline-end" role="tooltip" dir="ltr">
+      <a class="TooltipContainer" href="#" dir="ltr">
+        リンク（ツールチップ LTRなら右）
+        <span class="Tooltip -inline-end" role="tooltip">
           <span class="Tooltip_Body">
             テキストが入ります。テキストが入ります。
           </span>
@@ -311,9 +319,9 @@
     </div>
 
     <div>
-      <a class="TooltipContainer" href="#">
+      <a class="TooltipContainer" href="#" dir="ltr">
         リンク（ツールチップ下）
-        <span class="Tooltip -block-end" role="tooltip" dir="ltr">
+        <span class="Tooltip -block-end" role="tooltip">
           <span class="Tooltip_Body">
             テキストが入ります。テキストが入ります。
           </span>
@@ -322,9 +330,9 @@
     </div>
 
     <div>
-      <a class="TooltipContainer" href="#">
-        リンク（ツールチップ左）
-        <span class="Tooltip -inline-start" role="tooltip" dir="ltr">
+      <a class="TooltipContainer" href="#" dir="ltr">
+        リンク（ツールチップ LTRなら左）
+        <span class="Tooltip -inline-start" role="tooltip">
           <span class="Tooltip_Body">
             テキストが入ります。テキストが入ります。
           </span>
@@ -332,12 +340,12 @@
       </a>
     </div>
 
-    <h2>RTL</h2>
+    <h2>dir="rtl"を指定</h2>
 
     <div>
-      <a class="TooltipContainer" href="#">
+      <a class="TooltipContainer" href="#" dir="rtl">
         リンク（ツールチップ上）
-        <span class="Tooltip -block-start" role="tooltip" dir="rtl">
+        <span class="Tooltip -block-start" role="tooltip">
           <span class="Tooltip_Body">
             テキストが入ります。テキストが入ります。
           </span>
@@ -346,9 +354,9 @@
     </div>
 
     <div>
-      <a class="TooltipContainer" href="#">
-        リンク（ツールチップ右）
-        <span class="Tooltip -inline-end" role="tooltip" dir="rtl">
+      <a class="TooltipContainer" href="#" dir="rtl">
+        リンク（ツールチップ LTRなら右）
+        <span class="Tooltip -inline-end" role="tooltip">
           <span class="Tooltip_Body">
             テキストが入ります。テキストが入ります。
           </span>
@@ -357,9 +365,9 @@
     </div>
 
     <div>
-      <a class="TooltipContainer" href="#">
+      <a class="TooltipContainer" href="#" dir="rtl">
         リンク（ツールチップ下）
-        <span class="Tooltip -block-end" role="tooltip" dir="rtl">
+        <span class="Tooltip -block-end" role="tooltip">
           <span class="Tooltip_Body">
             テキストが入ります。テキストが入ります。
           </span>
@@ -368,11 +376,59 @@
     </div>
 
     <div>
-      <a class="TooltipContainer" href="#">
-        リンク（ツールチップ左）
-        <span class="Tooltip -inline-start" role="tooltip" dir="rtl">
+      <a class="TooltipContainer" href="#" dir="rtl">
+        リンク（ツールチップ LTRなら左）
+        <span class="Tooltip -inline-start" role="tooltip">
           <span class="Tooltip_Body">
             テキストが入ります。テキストが入ります。
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <h2>dir="auto"（要素内の文字から自動判別）</h2>
+    <p>どちらもツールチップには-inset-startを指定し、インライン方向の始端側に表示される。</p>
+    <div>
+      <p>アラビア語を含む場合。ツールチップは右側に表示される。</p>
+      <a class="TooltipContainer" href="#" dir="auto">
+        مرحبًاّ! كيف حالك
+        <span class="Tooltip -inline-start" role="tooltip">
+          <span class="Tooltip_Body">
+            مرحبًاّ! كيف حالك
+          </span>
+        </span>
+      </a>
+    </div>
+    <div>
+      <p>日本語を含む場合。ツールチップは左側に表示される。</p>
+      <a class="TooltipContainer" href="#" dir="auto">
+        こんにちは元気ですか
+        <span class="Tooltip -inline-start" role="tooltip">
+          <span class="Tooltip_Body">
+            こんにちは元気ですか
+          </span>
+        </span>
+      </a>
+    </div>
+    <p>どちらもツールチップには-block-startを指定し、ブロック方向の始端側に表示される。<br>ただし:dir()擬似クラスが使えないブラウザでは、アラビア語の方のツールチップは正しい位置に表示できない。</p>
+    <div>
+      <p>アラビア語を含む場合。ツールチップは上側に表示される。</p>
+      <a class="TooltipContainer" href="#" dir="auto">
+        مرحبًاّ! كيف حالك
+        <span class="Tooltip -block-start" role="tooltip">
+          <span class="Tooltip_Body">
+            مرحبًاّ! كيف حالك
+          </span>
+        </span>
+      </a>
+    </div>
+    <div>
+      <p>日本語を含む場合。ツールチップは上側に表示される。</p>
+      <a class="TooltipContainer" href="#" dir="auto">
+        こんにちは元気ですか
+        <span class="Tooltip -block-start" role="tooltip">
+          <span class="Tooltip_Body">
+            こんにちは元気ですか
           </span>
         </span>
       </a>
