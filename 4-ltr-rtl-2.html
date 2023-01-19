@@ -110,7 +110,7 @@
       border-inline-color: transparent;
     }
 
-    /* ツールチップが左に表示される場合の△ */
+    /* ツールチップがインライン方向の始端（LTRでは左）に表示される場合の△ */
     .Tooltip.-inline-start::before {
       inset-block: 0;
       inset-inline-end: calc(var(--_triangle-size) * -1);
@@ -120,7 +120,7 @@
       border-inline-color: var(--_bg) transparent;
     }
 
-    /* ツールチップが右に表示される場合の△ */
+    /* ツールチップがインライン方向の終端（LTRでは右）に表示される場合の△ */
     .Tooltip.-inline-end::before {
       inset-block: 0;
       inset-inline-start: calc(var(--_triangle-size) * -1);
