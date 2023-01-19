@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo</title>
+  <style>
+    .Tooltip {
+      --_bg: #fff;
+      --_color: #000;
+      --_triangle-size: 5px;
+      --_gap: 3px;
+      --_shadow: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+      --isRTL: -1;
+
+      position: absolute;
+      z-index: 1;
+      display: block;
+
+      /* ツールチップのみため */
+      max-width: 150px;
+      background-color: var(--_bg);
+      color: var(--_color);
+      text-align: start;
+      border-radius: 8px;
+      font-size: 12px;
+      filter: var(--_shadow);
+
+      /* 表示・非表示の指定 */
+      visibility: hidden;
+      opacity: 0;
+
+      /* フォーカス枠を残さないように隠しておく */
+      clip: rect(1px, 1px, 1px, 1px);
+      clip-path: inset(50%);
+      overflow: hidden;
+      width: 0;
+      height: 0;
+      padding: 0;
+    }
+
+    .Tooltip[dir="rtl"] {
+      --isRTL: 1;
+    }
+
+    /* ツールチップが上に表示される場合 */
+    .Tooltip.-block-start {
+      inset-block-end: calc(100% + var(--_triangle-size) + var(--_gap));
+      inset-inline-start: 50%;
+      translate: calc(50% * var(--isRTL)) var(--_y, 0);
+    }
+
+    /* ツールチップが下に表示される場合 */
+    .Tooltip.-block-end {
+      inset-block-start: calc(100% + var(--_triangle-size) + var(--_gap));
+      inset-inline-start: 50%;
+      translate: calc(50% * var(--isRTL)) var(--_y, 0);
+    }
+
+    /* ツールチップがインライン方向の終端（LTRでは右）に表示される場合 */
+    .Tooltip.-inline-end {
+      inset-block-end: 50%;
+      inset-inline-start: calc(100% + var(--_triangle-size) + var(--_gap));
+      translate: var(--_x, 0) 50%;
+    }
+
+    /* ツールチップがインライン方向の始端（LTRでは左）に表示される場合 */
+    .Tooltip.-inline-start {
+      inset-block-end: 50%;
+      inset-inline-end: calc(100% + var(--_triangle-size) + var(--_gap));
+      translate: var(--_x, 0) 50%;
+    }
+
+    /*
+      △を擬似要素で作成
+    */
+    .Tooltip::before {
+      position: absolute;
+      margin: auto;
+      content: "";
+      display: block;
+      width: 0;
+      height: 0;
+      border-style: solid;
+    }
+
+    /* ツールチップが上に表示される場合の△ */
+    .Tooltip.-block-start::before {
+      bottom: calc(var(--_triangle-size) * -1);
+      right: 0;
+      left: 0;
+      border-block-width: var(--_triangle-size) 0;
+      border-inline-width: var(--_triangle-size);
+      border-block-color: var(--_bg) transparent;
+      border-inline-color: transparent;
+    }
+
+    /* ツールチップが下に表示される場合の△ */
+    .Tooltip.-block-end::before {
+      inset-block-start: calc(var(--_triangle-size) * -1);
+      inset-inline: 0;
+      border-block-width: 0 var(--_triangle-size);
+      border-inline-width: var(--_triangle-size);
+      border-block-color: transparent var(--_bg);
+      border-inline-color: transparent;
+    }
+
+    /* ツールチップが左に表示される場合の△ */
+    .Tooltip.-inline-start::before {
+      inset-block: 0;
+      inset-inline-end: calc(var(--_triangle-size) * -1);
+      border-block-width: var(--_triangle-size);
+      border-inline-width: var(--_triangle-size) 0;
+      border-block-color: transparent;
+      border-inline-color: var(--_bg) transparent;
+    }
+
+    /* ツールチップが右に表示される場合の△ */
+    .Tooltip.-inline-end::before {
+      inset-block: 0;
+      inset-inline-start: calc(var(--_triangle-size) * -1);
+      border-block-width: var(--_triangle-size);
+      border-inline-width: 0 var(--_triangle-size);
+      border-block-color: transparent;
+      border-inline-color: transparent var(--_bg);
+    }
+
+    /* 透明な要素を背面に敷くことでツールチップにマウスをのせやすくする */
+    .Tooltip::after {
+      position: absolute;
+      content: "";
+      display: block;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    /* ツールチップが上に表示される場合 */
+    .Tooltip.-block-start::after {
+      inset-block-start: 100%;
+      inset-inline-start: 0;
+      height: calc(var(--_triangle-size) + var(--_gap));
+    }
+
+    /* ツールチップが下に表示される場合 */
+    .Tooltip.-bottom::after {
+      inset-block-end: 100%;
+      inset-inline-start: 0;
+      height: calc(var(--_triangle-size) + var(--_gap));
+    }
+
+    /* ツールチップが左に表示される場合 */
+    .Tooltip.-left::after {
+      inset-block-start: 0;
+      inset-inline-start: 100%;
+      width: calc(var(--_triangle-size) + var(--_gap));
+    }
+
+    /* ツールチップが右に表示される場合 */
+    .Tooltip.-right::after {
+      inset-block-start: 0;
+      inset-inline-end: 100%;
+      width: calc(var(--_triangle-size) + var(--_gap));
+    }
+
+    /*
+      ツールチップがあることを、支援技術に伝えるための非表示テキスト
+    */
+    .Tooltip_Body {
+      display: block;
+    }
+    .Tooltip_Body::before {
+      content: "。ツールチップあり：";
+      position: absolute;
+      clip: rect(1px, 1px, 1px, 1px);
+      clip-path: inset(50%);
+      height: 1px;
+      width: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    /*
+      対象の要素の周囲に表示されるツールチップを上下左右に配置するために親要素をrelativeにする
+      ※親要素のpositionの値を自身で調整したい場合は不要
+    */
+    .TooltipContainer {
+      position: relative;
+      display: inline-block;
+    }
+
+    /*
+      ホバー、フォーカス、アクティブ時にツールチップを表示する
+    */
+    .Tooltip.-show {
+      visibility: visible;
+      opacity: 1;
+      /* 隠したものを元に戻す指定 */
+      overflow: visible;
+      clip: initial;
+      clip-path: initial;
+      width: max-content;
+      height: auto;
+      padding: 10px;
+    }
+
+    /*
+      no-preferenceはprefers-reduced-motionの設定を行なっていない場合
+      アニメーションさせる
+    */
+    @media (prefers-reduced-motion: no-preference) {
+      /* フェードアウト用の指定 */
+      .Tooltip {
+        transition: visibility 0s 0.1s, opacity 0.1s, translate 0.1s;
+      }
+      /* フェードイン用の指定 */
+      .Tooltip.-show {
+        transition: visibility 0s 0s, opacity 0.3s, translate 0.3s;
+      }
+      /*
+        ホバー・フォーカス・アクティブ時にツールチップをCSS Transitionさせるため
+        ホバー・フォーカス・アクティブ時でないときに、初期位置を指定する
+      */
+      .Tooltip:not(.-show).-top {
+        --_y: var(--_gap);
+      }
+      .Tooltip:not(.-show).-bottom   {
+        --_y: calc( var(--_gap) * -1);
+      }
+      .Tooltip:not(.-show).-left {
+        --_x: var(--_gap);
+      }
+      .Tooltip:not(.-show).-right {
+        --_x: calc(var(--_gap) * -1);
+      }  
+    }
+
+    /*
+      ダークモードの場合の対応
+    */
+    @media (prefers-color-scheme: dark) {
+      body {
+        color: #c9d1d9;
+        background-color: #000;
+      }
+      a {
+        color: #00ffe0;
+      }
+      input {
+        color: #c9d1d9;
+        background-color: #282933;
+        border-color: currentColor;
+      }
+      .Tooltip {
+        --_bg: #282933;
+        --_color: #c9d1d9;
+      }
+    }
+
+    html {
+      height: 100%;
+    }
+    body {
+      height: 100%;
+      display: grid;
+      place-items: center;
+    }
+    input {
+      border: 1px solid currentColor;
+      border-radius: 4px;
+    }
+    .Container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      writing-mode: horizontal-tb;
+    }
+    .Container h2 {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="Container">
+
+    <h2>LTR</h2>
+
+    <div>
+      <a class="TooltipContainer" href="#">
+        リンク（ツールチップ上）
+        <span class="Tooltip -block-start" role="tooltip" dir="ltr">
+          <span class="Tooltip_Body">
+            テキストが入ります。テキストが入ります。
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <div>
+      <a class="TooltipContainer" href="#">
+        リンク（ツールチップ右）
+        <span class="Tooltip -inline-end" role="tooltip" dir="ltr">
+          <span class="Tooltip_Body">
+            テキストが入ります。テキストが入ります。
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <div>
+      <a class="TooltipContainer" href="#">
+        リンク（ツールチップ下）
+        <span class="Tooltip -block-end" role="tooltip" dir="ltr">
+          <span class="Tooltip_Body">
+            テキストが入ります。テキストが入ります。
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <div>
+      <a class="TooltipContainer" href="#">
+        リンク（ツールチップ左）
+        <span class="Tooltip -inline-start" role="tooltip" dir="ltr">
+          <span class="Tooltip_Body">
+            テキストが入ります。テキストが入ります。
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <h2>RTL</h2>
+
+    <div>
+      <a class="TooltipContainer" href="#">
+        リンク（ツールチップ上）
+        <span class="Tooltip -block-start" role="tooltip" dir="rtl">
+          <span class="Tooltip_Body">
+            テキストが入ります。テキストが入ります。
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <div>
+      <a class="TooltipContainer" href="#">
+        リンク（ツールチップ右）
+        <span class="Tooltip -inline-end" role="tooltip" dir="rtl">
+          <span class="Tooltip_Body">
+            テキストが入ります。テキストが入ります。
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <div>
+      <a class="TooltipContainer" href="#">
+        リンク（ツールチップ下）
+        <span class="Tooltip -block-end" role="tooltip" dir="rtl">
+          <span class="Tooltip_Body">
+            テキストが入ります。テキストが入ります。
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <div>
+      <a class="TooltipContainer" href="#">
+        リンク（ツールチップ左）
+        <span class="Tooltip -inline-start" role="tooltip" dir="rtl">
+          <span class="Tooltip_Body">
+            テキストが入ります。テキストが入ります。
+          </span>
+        </span>
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    const openTooltip = ($tooltip) => {
+      $tooltip.classList.add("-show");
+    };
+
+    const closeTooltip = ($tooltip) => {
+      $tooltip.classList.remove("-show");
+    };
+
+    const handleTooltipOpening = ({ $tooltipContainer, $tooltip, $focusableElement }) => {
+      $tooltipContainer.addEventListener("mouseenter", () => {
+        openTooltip($tooltip);
+      });
+
+      $tooltipContainer.addEventListener("focus", () => {
+        openTooltip($tooltip);
+      });
+
+      if ($focusableElement) {
+        $focusableElement.addEventListener("focus", () => {
+          openTooltip($tooltip);
+        });
+      }
+    };
+
+    const handleTooltipClosing = ({ $tooltipContainer, $tooltip, $focusableElement }) => {
+      $tooltipContainer.addEventListener("mouseleave", () => {
+        closeTooltip($tooltip);
+      });
+      
+      $tooltipContainer.addEventListener("blur", () => {
+        closeTooltip($tooltip);
+      });
+      
+      if ($focusableElement) {
+        $focusableElement.addEventListener("blur", () => {
+          closeTooltip($tooltip);
+        });
+      }
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === "Escape" || e.key === "Esc") {
+          closeTooltip($tooltip);
+        }
+      })
+    };
+
+    const main = () => {
+      const $tooltipContainers = document.querySelectorAll(".TooltipContainer");
+      
+      $tooltipContainers.forEach(($tooltipContainer) => {
+        const $tooltip = $tooltipContainer.querySelector(".Tooltip");
+        const $focusableElement = $tooltipContainer.querySelector("a, input, select, textarea");
+        handleTooltipOpening({ $tooltipContainer, $tooltip, $focusableElement });
+        handleTooltipClosing({ $tooltipContainer, $tooltip, $focusableElement });
+      })
+    };
+
+    document.addEventListener("DOMContentLoaded", main, { once: true });
+  </script>
+</body>
+</html>
